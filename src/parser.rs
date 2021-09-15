@@ -77,8 +77,8 @@ where
 
                 //parse the length, the last byte in the buffer is the first non-ascii digit.
                 State::ParseLength(buf, len) => {
-                    match String::from_utf8_lossy(&buf[..*len - 1]).parse() {
-                        Ok(msg_len) => *me.state = State::VerifyLength(msg_len, buf[*len - 1]),
+                    match String::from_utf8_lossy(&buf[..*len]).parse() {
+                        Ok(msg_len) => *me.state = State::VerifyLength(msg_len, buf[*len]),
                         Err(_) => return integer_overflow(),
                     }
                 }

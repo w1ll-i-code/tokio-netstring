@@ -58,7 +58,6 @@ where
         let me = self.project();
 
         loop {
-            println!("{:?}", me.state);
             match me.state {
                 //initialize the state machine
                 State::Ready => {
