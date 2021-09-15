@@ -6,23 +6,7 @@ use std::task::{Context, Poll};
 use pin_project_lite::pin_project;
 use tokio::io::{AsyncWrite, ErrorKind, Result};
 
-macro_rules! ready {
-    ($e:expr) => {
-        match $e {
-            Poll::Ready(t) => t,
-            Poll::Pending => return Poll::Pending,
-        }
-    };
-}
-
-macro_rules! ready_and_ok {
-    ($e:expr) => {
-        match ready!($e) {
-            Ok(val) => val,
-            Err(err) => return Poll::Ready(Err(err)),
-        }
-    };
-}
+use crate::*;
 
 pub(crate) fn write_netstring<'a, A>(writer: &'a mut A, buf: &'a [u8]) -> WriteMessage<'a, A>
 where

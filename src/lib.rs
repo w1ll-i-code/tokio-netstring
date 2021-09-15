@@ -2,6 +2,7 @@ use tokio::io::{AsyncRead, AsyncWrite};
 
 mod parser;
 mod writer;
+mod macros;
 
 pub trait NetstringReader: AsyncRead {
     fn read_netstring<'a>(&'a mut self, buf: &'a mut [u8]) -> parser::ReadMessage<'a, Self>

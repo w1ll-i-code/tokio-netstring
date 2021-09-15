@@ -6,32 +6,7 @@ use std::task::{Context, Poll};
 use pin_project_lite::pin_project;
 use tokio::io::{AsyncRead, Error, ErrorKind, ReadBuf, Result};
 
-macro_rules! ready {
-    ($e:expr) => {
-        match $e {
-            Poll::Ready(t) => t,
-            Poll::Pending => return Poll::Pending,
-        }
-    };
-}
-
-macro_rules! ready_and_ok {
-    ($e:expr) => {
-        match ready!($e) {
-            Ok(val) => val,
-            Err(err) => return Poll::Ready(Err(err)),
-        }
-    };
-}
-
-macro_rules! bytes_read {
-    ($e:expr) => {
-        match $e.filled().len() {
-            0 => return Poll::Ready(Err(eof())),
-            len => len,
-        }
-    };
-}
+use crate::*;
 
 // usize::MAX.to_string().len() + one byte separator
 const MAX_LENGTH: usize = 21;
