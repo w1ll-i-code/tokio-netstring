@@ -1,8 +1,8 @@
 #[cfg(test)]
 mod tests {
     use tokio::time::Duration;
-    use tokio_test::io::Builder;
     use tokio_netstring::NetstringReader;
+    use tokio_test::io::Builder;
 
     #[tokio::test]
     async fn should_parse_netstring() {
@@ -12,7 +12,9 @@ mod tests {
 
         let mut test = Builder::new().read(msg.as_bytes()).build();
 
-        test.read_netstring(&mut buf).await.expect("Test should pass");
+        test.read_netstring(&mut buf)
+            .await
+            .expect("Test should pass");
 
         assert_eq!(expected.as_bytes(), buf);
     }
@@ -30,7 +32,9 @@ mod tests {
             .read(&msg.as_bytes()[split..])
             .build();
 
-        test.read_netstring(&mut buf).await.expect("Test should pass");
+        test.read_netstring(&mut buf)
+            .await
+            .expect("Test should pass");
 
         assert_eq!(expected.as_bytes(), buf);
     }
@@ -43,7 +47,9 @@ mod tests {
 
         let mut test = Builder::new().read(&msg.as_bytes()[..split]).build();
 
-        test.read_netstring(&mut buf).await.expect_err("Message not finished");
+        test.read_netstring(&mut buf)
+            .await
+            .expect_err("Message not finished");
     }
 
     #[tokio::test]
@@ -54,6 +60,8 @@ mod tests {
 
         let mut test = Builder::new().read(&msg.as_bytes()[..split]).build();
 
-        test.read_netstring(&mut buf).await.expect_err("Message not finished");
+        test.read_netstring(&mut buf)
+            .await
+            .expect_err("Message not finished");
     }
 }

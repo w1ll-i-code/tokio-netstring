@@ -28,12 +28,13 @@ macro_rules! bytes_read {
     };
 }
 
-// #[macro_export]
-// macro_rules! read_byte {
-//     ($e:expr) => {
-//         let mut buf = [0;1];
-//         let buf = BufReader::new(&mut buf);
-//         let _ = bytes_read!(read_and_ok!(Pin::new().poll_read(&mut buf)));
-//         buf[0]
-//     };
-// }
+#[macro_export]
+macro_rules! read_byte {
+    ($reader:expr, $cx:expr) => {{
+        let mut byte_buf = [0; 1];
+        let mut read_buf = ReadBuf::new(&mut byte_buf);
+        ready_and_ok!(Pin::new(&mut *$reader).poll_read($cx, &mut read_buf));
+        bytes_read!(read_buf);
+        byte_buf[0]
+    }};
+}

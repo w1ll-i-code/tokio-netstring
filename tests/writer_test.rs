@@ -1,8 +1,8 @@
 #[cfg(test)]
 mod tests {
     use std::time::Duration;
-    use tokio_test::io::Builder;
     use tokio_netstring::NetstringWriter;
+    use tokio_test::io::Builder;
 
     #[tokio::test]
     async fn should_write_netstring() {
@@ -11,7 +11,10 @@ mod tests {
 
         let mut stream = Builder::new().write(expected.as_bytes()).build();
 
-        stream.write_netstring(msg.as_bytes()).await.expect("Test passes");
+        stream
+            .write_netstring(msg.as_bytes())
+            .await
+            .expect("Test passes");
     }
 
     #[tokio::test]
@@ -26,6 +29,9 @@ mod tests {
             .write(&expected.as_bytes()[cut_off..])
             .build();
 
-        stream.write_netstring(msg.as_bytes()).await.expect("Test passes");
+        stream
+            .write_netstring(msg.as_bytes())
+            .await
+            .expect("Test passes");
     }
 }

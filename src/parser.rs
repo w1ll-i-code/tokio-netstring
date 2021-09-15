@@ -68,12 +68,10 @@ where
 
                 //read the length of the netstring, one byte at a time
                 State::ReadLength(buf, prog) => {
-                    let mut read_buf = ReadBuf::new(&mut buf[*prog..*prog + 1]);
-                    ready_and_ok!(Pin::new(&mut *me.reader).poll_read(cx, &mut read_buf));
-                    *prog += bytes_read!(read_buf);
-
-                    if *prog == MAX_LENGTH || !read_buf.filled()[0].is_ascii_digit() {
-                        *me.state = State::ParseLength(*buf, *prog);
+                    buf[*prog] = read_byte!(me.reader, cx);
+                    match *prog == MAX_LENGTH - 1 || !buf[*prog].is_ascii_digit() {
+                        true => *me.state = State::ParseLength(*buf, *prog),
+                        false => *prog += 1,
                     }
                 }
 
@@ -114,16 +112,10 @@ where
 
                 //verify that the message is terminated with a ','
                 State::ParseTerminator => {
-                    let mut byte_buf = [0; 1];
-                    let mut read_buf = ReadBuf::new(&mut byte_buf);
-
-                    ready_and_ok!(Pin::new(&mut *me.reader).poll_read(cx, &mut read_buf));
-                    bytes_read!(read_buf);
-
-                    return match byte_buf[0] {
+                    return match read_byte!(me.reader, cx) {
                         b',' => Poll::Ready(Ok(me.buf.filled().len())),
                         term => wrong_terminator(term),
-                    };
+                    }
                 }
             }
         }
@@ -153,7 +145,7 @@ fn wrong_separator(separator: u8) -> Poll<Result<usize>> {
         ErrorKind::InvalidData,
         format!(
             "ERROR: Expected separator ':' but found {} instead",
-            separator
+            separator as char
         ),
     )))
 }
@@ -163,8 +155,7 @@ fn wrong_terminator(terminator: u8) -> Poll<Result<usize>> {
         ErrorKind::InvalidData,
         format!(
             "ERROR: Expected terminator ',' but found {} instead",
-            terminator
+            terminator as char
         ),
     )))
 }
-
