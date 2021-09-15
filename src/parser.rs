@@ -87,7 +87,7 @@ where
 
                 //verify that the message fits into the buffer
                 State::VerifyLength(msg_len, separator) => match me.buf.remaining() {
-                    buf_size if buf_size <= *msg_len => return buffer_to_small(),
+                    buf_size if buf_size < *msg_len => return buffer_to_small(),
                     _ => *me.state = State::ParseSeparator(*msg_len, *separator),
                 },
 

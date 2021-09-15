@@ -4,14 +4,14 @@ mod tests {
     use tokio_test::io::Builder;
     use tokio_netstring::NetstringWriter;
 
-    #[test]
-    fn should_write_netstring() {
+    #[tokio::test]
+    async fn should_write_netstring() {
         let msg = "Hello, World!";
         let expected = "13:Hello, World!,";
 
         let mut stream = Builder::new().write(expected.as_bytes()).build();
 
-        tokio_test::block_on(stream.write_netstring(msg.as_bytes())).expect("Test passes");
+        stream.write_netstring(msg.as_bytes()).await.expect("Test passes");
     }
 
     #[tokio::test]
