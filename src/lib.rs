@@ -1,16 +1,17 @@
 use tokio::io::{AsyncRead, AsyncWrite};
 
 mod macros;
-mod parser;
+mod read;
 mod read_alloc;
-mod writer;
+mod write;
+mod drop;
 
 pub trait NetstringReader: AsyncRead {
-    fn read_netstring<'a>(&'a mut self, buf: &'a mut [u8]) -> parser::ReadMessage<'a, Self>
+    fn read_netstring<'a>(&'a mut self, buf: &'a mut [u8]) -> read::ReadMessage<'a, Self>
     where
         Self: Unpin,
     {
-        parser::read_netstring(self, buf)
+        read::read_netstring(self, buf)
     }
 
     fn read_netstring_alloc(&mut self) -> read_alloc::ReadMessageAlloc<Self>
@@ -19,14 +20,21 @@ pub trait NetstringReader: AsyncRead {
     {
         read_alloc::read_netstring_alloc(self)
     }
-}
 
-pub trait NetstringWriter: AsyncWrite {
-    fn write_netstring<'a>(&'a mut self, buf: &'a [u8]) -> writer::WriteMessage<'a, Self>
+    fn drop_netstring(&mut self) -> drop::DropMessage<Self>
     where
         Self: Unpin,
     {
-        writer::write_netstring(self, buf)
+        drop::drop_netstring(self)
+    }
+}
+
+pub trait NetstringWriter: AsyncWrite {
+    fn write_netstring<'a>(&'a mut self, buf: &'a [u8]) -> write::WriteMessage<'a, Self>
+    where
+        Self: Unpin,
+    {
+        write::write_netstring(self, buf)
     }
 }
 
