@@ -20,7 +20,7 @@ enum State {
     ParseTerminator(Vec<u8>),
 }
 
-pub(crate) fn read_netstring_alloc<A>(reader: &mut A) -> ReadMessageAlloc<A>
+pub(crate) fn read_netstring_alloc<A>(reader: &mut A) -> ReadMessageAlloc<'_, A>
 where
     A: AsyncRead + Unpin + ?Sized,
 {

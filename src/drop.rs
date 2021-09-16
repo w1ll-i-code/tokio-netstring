@@ -19,7 +19,7 @@ enum State {
     ParseTerminator,
 }
 
-pub(crate) fn drop_netstring<A>(reader: &mut A) -> DropMessage<A>
+pub(crate) fn drop_netstring<A>(reader: &mut A) -> DropMessage<'_, A>
     where A: AsyncRead + Unpin + ?Sized,
     {
         DropMessage {
