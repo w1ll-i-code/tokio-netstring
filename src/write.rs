@@ -6,8 +6,6 @@ use std::task::{Context, Poll};
 use pin_project_lite::pin_project;
 use tokio::io::{AsyncWrite, ErrorKind, Result};
 
-use crate::*;
-
 pub(crate) fn write_netstring<'a, A>(writer: &'a mut A, buf: &'a [u8]) -> WriteMessage<'a, A>
 where
     A: AsyncWrite + Unpin + ?Sized,

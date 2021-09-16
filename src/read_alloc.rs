@@ -6,8 +6,6 @@ use std::task::{Context, Poll};
 use pin_project_lite::pin_project;
 use tokio::io::{AsyncRead, Error, ErrorKind, ReadBuf, Result};
 
-use crate::*;
-
 // usize::MAX.to_string().len() + one byte separator
 const MAX_LENGTH: usize = 21;
 
