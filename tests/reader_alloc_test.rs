@@ -11,11 +11,9 @@ mod tests {
 
         let mut test = Builder::new().read(msg.as_bytes()).build();
 
-        let res = test.read_netstring_alloc()
-            .await
-            .expect("Test should pass");
+        let res = test.read_netstring_alloc().await.expect("Test should pass");
 
-        assert_eq!(expected.as_bytes(), res.as_ref());
+        assert_eq!(expected.as_bytes(), &res);
     }
 
     #[tokio::test]
@@ -30,11 +28,9 @@ mod tests {
             .read(&msg.as_bytes()[split..])
             .build();
 
-        let res = test.read_netstring_alloc()
-            .await
-            .expect("Test should pass");
+        let res = test.read_netstring_alloc().await.expect("Test should pass");
 
-        assert_eq!(expected.as_bytes(), res.as_ref());
+        assert_eq!(expected.as_bytes(), &res);
     }
 
     #[tokio::test]

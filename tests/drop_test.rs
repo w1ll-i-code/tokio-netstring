@@ -10,9 +10,7 @@ mod tests {
 
         let mut test = Builder::new().read(msg.as_bytes()).build();
 
-        test.drop_netstring()
-            .await
-            .expect("Test should pass");
+        test.drop_netstring().await.expect("Test should pass");
     }
 
     #[tokio::test]
@@ -26,9 +24,7 @@ mod tests {
             .read(&msg.as_bytes()[split..])
             .build();
 
-        test.drop_netstring()
-            .await
-            .expect("Test should pass");
+        test.drop_netstring().await.expect("Test should pass");
     }
 
     #[tokio::test]

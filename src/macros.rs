@@ -1,6 +1,5 @@
 #![macro_use]
 
-#[macro_use]
 macro_rules! ready {
     ($e:expr) => {
         match $e {
@@ -10,7 +9,6 @@ macro_rules! ready {
     };
 }
 
-#[macro_use]
 macro_rules! ready_and_ok {
     ($e:expr) => {
         match ready!($e) {
@@ -20,7 +18,6 @@ macro_rules! ready_and_ok {
     };
 }
 
-#[macro_use]
 macro_rules! bytes_read {
     ($e:expr) => {
         match $e.filled().len() {
@@ -30,7 +27,6 @@ macro_rules! bytes_read {
     };
 }
 
-#[macro_use]
 macro_rules! read_byte {
     ($reader:expr, $cx:expr) => {{
         let mut byte_buf = [0; 1];

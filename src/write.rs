@@ -52,15 +52,13 @@ where
         let me = self.project();
 
         loop {
-            let n = ready_and_ok!(Pin::new(&mut *me.writer).poll_write(cx, &me.buf[*me.prog..]));
-            *me.prog += n;
-
             if *me.prog == me.buf.len() {
                 return Poll::Ready(Ok(*me.prog));
             }
 
-            if n == 0 {
-                return Poll::Ready(Err(ErrorKind::WriteZero.into()));
+            match ready_and_ok!(Pin::new(&mut *me.writer).poll_write(cx, &me.buf[*me.prog..])) {
+                0 => return Poll::Ready(Err(ErrorKind::WriteZero.into())),
+                wrote => *me.prog += wrote,
             }
         }
     }

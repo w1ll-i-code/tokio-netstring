@@ -50,9 +50,9 @@ impl<A> Future for ReadMessageAlloc<'_, A>
 where
     A: AsyncRead + Unpin + ?Sized,
 {
-    type Output = Result<Box<[u8]>>;
+    type Output = Result<Vec<u8>>;
 
-    fn poll(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Result<Box<[u8]>>> {
+    fn poll(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Result<Vec<u8>>> {
         let me = self.project();
 
         loop {
@@ -85,26 +85,26 @@ where
                     sep => return wrong_separator(sep),
                 },
 
-                State::AllocateMemory(size) =>
-                    *me.state = State::ReadMessage(vec![0;*size], 0),
+                State::AllocateMemory(size) => *me.state = State::ReadMessage(vec![0; *size], 0),
 
                 //read the message from the stream
-                State::ReadMessage(buf, prog) =>
-                if *prog == (buf.capacity()) {
-                    *me.state = State::ParseTerminator(std::mem::take(buf));
-                } else {
-                    let read = {
-                        let mut reader = ReadBuf::new(&mut buf[*prog..]);
-                        ready_and_ok!(Pin::new(&mut *me.reader).poll_read(cx, &mut reader));
-                        bytes_read!(reader)
-                    };
-                    *prog += read;
-                },
+                State::ReadMessage(buf, prog) => {
+                    if *prog == (buf.capacity()) {
+                        *me.state = State::ParseTerminator(std::mem::take(buf));
+                    } else {
+                        let read = {
+                            let mut reader = ReadBuf::new(&mut buf[*prog..]);
+                            ready_and_ok!(Pin::new(&mut *me.reader).poll_read(cx, &mut reader));
+                            bytes_read!(reader)
+                        };
+                        *prog += read;
+                    }
+                }
 
                 //verify that the message is terminated with a ','
                 State::ParseTerminator(buf) => {
                     return match read_byte!(me.reader, cx) {
-                        b',' => return Poll::Ready(Ok(std::mem::take(buf).into_boxed_slice())),
+                        b',' => return Poll::Ready(Ok(std::mem::take(buf))),
                         term => wrong_terminator(term),
                     }
                 }
@@ -117,14 +117,14 @@ fn eof() -> Error {
     Error::new(ErrorKind::UnexpectedEof, "early eof")
 }
 
-fn integer_overflow() -> Poll<Result<Box<[u8]>>> {
+fn integer_overflow() -> Poll<Result<Vec<u8>>> {
     Poll::Ready(Err(Error::new(
         ErrorKind::InvalidData,
         "ERROR: Integer overflow while parsing message length.".to_string(),
     )))
 }
 
-fn wrong_separator(separator: u8) -> Poll<Result<Box<[u8]>>> {
+fn wrong_separator(separator: u8) -> Poll<Result<Vec<u8>>> {
     Poll::Ready(Err(Error::new(
         ErrorKind::InvalidData,
         format!(
@@ -134,7 +134,7 @@ fn wrong_separator(separator: u8) -> Poll<Result<Box<[u8]>>> {
     )))
 }
 
-fn wrong_terminator(terminator: u8) -> Poll<Result<Box<[u8]>>> {
+fn wrong_terminator(terminator: u8) -> Poll<Result<Vec<u8>>> {
     Poll::Ready(Err(Error::new(
         ErrorKind::InvalidData,
         format!(
