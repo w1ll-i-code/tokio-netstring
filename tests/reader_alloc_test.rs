@@ -34,6 +34,23 @@ mod tests {
     }
 
     #[tokio::test]
+    async fn should_parse_netstring_byte_by_byte() {
+        let msg = "13:Hello, World!,";
+        let expected = "Hello, World!";
+
+        let mut test = Builder::new();
+
+        for i in 0..msg.len() {
+            test.read(&msg.as_bytes()[i..i+1])
+                .wait(Duration::from_micros(5));
+        }
+
+        let res = test.build().read_netstring_alloc().await.expect("Test should pass");
+
+        assert_eq!(expected.as_bytes(), &res);
+    }
+
+    #[tokio::test]
     async fn should_fail_on_incomplete_message() {
         let msg = "13:Hello, World!,";
         let split = 10;

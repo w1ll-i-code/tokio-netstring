@@ -5,7 +5,7 @@ mod tests {
     use tokio_test::io::Builder;
 
     #[tokio::test]
-    async fn should_parse_netstring() {
+    async fn should_drop_netstring() {
         let msg = "13:Hello, World!,";
 
         let mut test = Builder::new().read(msg.as_bytes()).build();
@@ -14,7 +14,7 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn should_parse_netstring_in_two_steps() {
+    async fn should_drop_netstring_in_two_steps() {
         let msg = "13:Hello, World!,";
         let split = 10;
 
@@ -26,28 +26,16 @@ mod tests {
 
         test.drop_netstring().await.expect("Test should pass");
     }
-
     #[tokio::test]
-    async fn should_fail_on_incomplete_message() {
+    async fn should_drop_netstring_byte_by_byte() {
         let msg = "13:Hello, World!,";
-        let split = 10;
-        let mut test = Builder::new().read(&msg.as_bytes()[..split]).build();
+        let mut test = Builder::new();
 
-        test.drop_netstring()
-            .await
-            .expect_err("Message not finished");
-    }
+        for i in 0..msg.len() {
+            test.read((&msg[i..i + 1]).as_bytes())
+                .wait(Duration::from_micros(5));
+        }
 
-    #[tokio::test]
-    async fn should_fail_on_incomplete_message_missing_terminator() {
-        let msg = "13:Hello, World!";
-        let split = 10;
-        let mut buf = [0; 13];
-
-        let mut test = Builder::new().read(&msg.as_bytes()[..split]).build();
-
-        test.read_netstring(&mut buf)
-            .await
-            .expect_err("Message not finished");
+        test.build().drop_netstring().await.expect("Test should pass");
     }
 }

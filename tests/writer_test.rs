@@ -9,10 +9,9 @@ mod tests {
         let msg = "Hello, World!";
         let expected = "13:Hello, World!,";
 
-        let mut stream = Builder::new().write(expected.as_bytes()).build();
+        let mut test = Builder::new().write(expected.as_bytes()).build();
 
-        stream
-            .write_netstring(msg.as_bytes())
+        test.write_netstring(msg.as_bytes())
             .await
             .expect("Test passes");
     }
@@ -23,15 +22,51 @@ mod tests {
         let expected = "13:Hello, World!,";
         let cut_off = 8;
 
-        let mut stream = Builder::new()
+        let mut test = Builder::new()
             .write(&expected.as_bytes()[..cut_off])
             .wait(Duration::from_millis(5))
             .write(&expected.as_bytes()[cut_off..])
             .build();
 
-        stream
+        test.write_netstring(msg.as_bytes())
+            .await
+            .expect("Test passes");
+    }
+
+    #[tokio::test]
+    async fn should_write_netstring_byte_by_byte() {
+        let msg = "Hello, World!";
+        let expected = "13:Hello, World!,";
+
+        let mut test = Builder::new();
+
+        for i in 0..expected.len() {
+            test.write(&expected.as_bytes()[i..i+1])
+                .wait(Duration::from_millis(5));
+        }
+
+        test.build()
             .write_netstring(msg.as_bytes())
             .await
             .expect("Test passes");
     }
+
+    #[tokio::test]
+    async fn should_write_zero_length_netstring_byte_by_byte() {
+        let msg = "";
+        let expected = "0:,";
+
+        let mut test = Builder::new();
+
+        for i in 0..expected.len() {
+            test.write(&expected.as_bytes()[i..i+1])
+                .wait(Duration::from_millis(5));
+        }
+
+        test.build()
+            .write_netstring(msg.as_bytes())
+            .await
+            .expect("Test passes");
+    }
+
 }
