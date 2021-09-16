@@ -1,7 +1,7 @@
 #[cfg(test)]
 mod tests {
     use std::time::Duration;
-    use tokio_netstring::NetstringWriter;
+    use tokio_netstring_trait::NetstringWriter;
     use tokio_test::io::Builder;
 
     #[tokio::test]

@@ -3,6 +3,11 @@ name = "tokio-netstring-trait"
 version = "0.0.1"
 edition = "2018"
 
+description = "A trait for tokios AsyncRead to easily read netstrings from streams."
+repository = "https://github.com/w1ll-i-code/tokio-netstring"
+keywords = ["tokio", "netstring", "trait", "parser"]
+categories = ["asynchronous", "encoding", "parser-implementations"]
+
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
