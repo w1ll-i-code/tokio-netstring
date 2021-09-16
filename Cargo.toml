@@ -9,6 +9,8 @@ keywords = ["tokio", "netstring", "trait", "parser"]
 categories = ["asynchronous", "encoding", "parser-implementations"]
 license-file = "LICENSE"
 
+exclude = ["tests/*"]
+
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
