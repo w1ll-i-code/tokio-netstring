@@ -6,8 +6,8 @@ mod read_alloc;
 mod write;
 mod drop;
 
-/// The netstring reader trait allows you to read one netstring at a time from any stream that has
-/// `AsyncRead` implemented. Neither implementation is Thread safe and multiple simultaneous reads
+/// The `NetstringReader` trait allows you to read one netstring at a time from any stream that has
+/// `AsyncRead` implemented. No implementation is thread-safe and multiple simultaneous reads
 /// can corrupt the message irreparably.
 pub trait NetstringReader: AsyncRead {
     /// This method allows to read one netstring into the buffer given.
@@ -40,7 +40,7 @@ pub trait NetstringReader: AsyncRead {
     ///
     /// 1. The Separator between length and the netstring is not `b':'`.
     ///
-    /// 1. The Netstring does not end with a `b':'`.
+    /// 1. The Netstring does not end with a `b','`.
     fn read_netstring<'a>(&'a mut self, buf: &'a mut [u8]) -> read::ReadMessage<'a, Self>
     where
         Self: Unpin,
