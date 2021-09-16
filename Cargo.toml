@@ -9,7 +9,7 @@ keywords = ["tokio", "netstring", "trait", "parser"]
 categories = ["asynchronous", "encoding", "parser-implementations"]
 license-file = "LICENSE"
 
-exclude = ["tests/*", "README.md"]
+exclude = ["tests/*", "README.md", ".gitignore"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
