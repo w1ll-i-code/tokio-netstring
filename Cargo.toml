@@ -1,6 +1,6 @@
 [package]
 name = "tokio-netstring-trait"
-version = "0.0.1"
+version = "0.1.0"
 edition = "2018"
 
 description = "A trait for tokios AsyncRead to easily read netstrings from streams."
