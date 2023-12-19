@@ -1,7 +1,7 @@
 #[cfg(test)]
 mod tests {
-    use tokio::time::Duration;
-    use tokio_netstring_trait::NetstringReader;
+    use tokio_netstring_trait::AsyncNetstringRead;
+    use std::time::Duration;
     use tokio_test::io::Builder;
 
     #[tokio::test]
@@ -48,7 +48,7 @@ mod tests {
         let mut test = Builder::new();
 
         for i in 0..msg.len() {
-            test.read(&msg.as_bytes()[i..i+1])
+            test.read(&msg.as_bytes()[i..i + 1])
                 .wait(Duration::from_micros(5));
         }
 
@@ -69,11 +69,12 @@ mod tests {
         let mut test = Builder::new();
 
         for i in 0..msg.len() {
-            test.read(&msg.as_bytes()[i..i+1])
+            test.read(&msg.as_bytes()[i..i + 1])
                 .wait(Duration::from_micros(5));
         }
 
-        let len = test.build()
+        let len = test
+            .build()
             .read_netstring(&mut buf)
             .await
             .expect("Test should pass");

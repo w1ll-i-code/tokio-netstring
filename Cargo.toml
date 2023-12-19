@@ -9,13 +9,14 @@ keywords = ["tokio", "netstring", "trait", "parser"]
 categories = ["asynchronous", "encoding", "parser-implementations"]
 license-file = "LICENSE"
 
-exclude = ["tests/*", "README.md", ".gitignore"]
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [dependencies]
-tokio = { version = "1.11", features = ["io-util", "macros"] }
-pin-project-lite = "0.2"
+tokio = { version = "1", default-features = false, features = ["io-util"]}
+log = "0.4"
+async-trait = "0.1"
 
 [dev-dependencies]
 tokio-test = "0.4"
+tokio = { version = "1", features = ["macros"]}
+
+[features]
+err_drop_message = []

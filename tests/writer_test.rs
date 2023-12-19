@@ -1,9 +1,8 @@
 #[cfg(test)]
 mod tests {
+    use tokio_netstring_trait::AsyncNetstringWrite;
     use std::time::Duration;
-    use tokio_netstring_trait::NetstringWriter;
     use tokio_test::io::Builder;
-
     #[tokio::test]
     async fn should_write_netstring() {
         let msg = "Hello, World!";
@@ -41,7 +40,7 @@ mod tests {
         let mut test = Builder::new();
 
         for i in 0..expected.len() {
-            test.write(&expected.as_bytes()[i..i+1])
+            test.write(&expected.as_bytes()[i..i + 1])
                 .wait(Duration::from_millis(5));
         }
 
@@ -59,7 +58,7 @@ mod tests {
         let mut test = Builder::new();
 
         for i in 0..expected.len() {
-            test.write(&expected.as_bytes()[i..i+1])
+            test.write(&expected.as_bytes()[i..i + 1])
                 .wait(Duration::from_millis(5));
         }
 
@@ -68,5 +67,4 @@ mod tests {
             .await
             .expect("Test passes");
     }
-
 }
